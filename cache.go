@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type Cache struct {
+type simpleCache struct {
 	items  sync.Map
 	cancel func()
 }
@@ -16,8 +16,8 @@ type item struct {
 	expires int64
 }
 
-func NewCache(garbageCollect time.Duration) *Cache {
-	cache := &Cache{
+func NewCache(garbageCollect time.Duration) Cache {
+	cache := &simpleCache{
 		items: sync.Map{},
 	}
 	if garbageCollect > 0 {
@@ -47,7 +47,7 @@ func NewCache(garbageCollect time.Duration) *Cache {
 	return cache
 }
 
-func (c *Cache) Get(key interface{}) (interface{}, bool) {
+func (c *simpleCache) Get(key interface{}) (interface{}, bool) {
 	obj, exists := c.items.Load(key)
 
 	if !exists {
@@ -63,12 +63,12 @@ func (c *Cache) Get(key interface{}) (interface{}, bool) {
 	return item.data, true
 }
 
-func (c *Cache) Exists(key interface{}) bool {
+func (c *simpleCache) Exists(key interface{}) bool {
 	_, ok := c.Get(key)
 	return ok
 }
 
-func (c *Cache) Set(key interface{}, value interface{}, duration time.Duration) {
+func (c *simpleCache) Set(key interface{}, value interface{}, duration time.Duration) {
 	var expires int64
 
 	if duration > 0 {
@@ -80,7 +80,7 @@ func (c *Cache) Set(key interface{}, value interface{}, duration time.Duration) 
 	})
 }
 
-func (c *Cache) Range(f func(key, value interface{}) bool) {
+func (c *simpleCache) Range(f func(key, value interface{}) bool) {
 	now := time.Now().UnixNano()
 
 	fn := func(key, value interface{}) bool {
@@ -96,11 +96,11 @@ func (c *Cache) Range(f func(key, value interface{}) bool) {
 	c.items.Range(fn)
 }
 
-func (c *Cache) Delete(key interface{}) {
+func (c *simpleCache) Delete(key interface{}) {
 	c.items.Delete(key)
 }
 
-func (c *Cache) Len() int {
+func (c *simpleCache) Len() int {
 	count := 0
 	c.Range(func(key, value interface{}) bool {
 		if value != nil {
@@ -111,6 +111,6 @@ func (c *Cache) Len() int {
 	return count
 }
 
-func (c *Cache) Close() {
+func (c *simpleCache) Close() {
 	c.cancel()
 }

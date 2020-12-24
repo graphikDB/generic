@@ -7,18 +7,17 @@ type queueNode struct {
 }
 
 // create a queue data structure
-type Queue struct {
+type simpleQueue struct {
 	head   *queueNode
 	tail   *queueNode
 	length int
 }
 
-func NewQueue() *Queue {
-	return &Queue{}
+func NewQueue() Queue {
+	return &simpleQueue{}
 }
 
-// Enqueue adds a new node to the tail of the queue
-func (q *Queue) Enqueue(value interface{}) {
+func (q *simpleQueue) Enqueue(value interface{}) {
 	q.length++
 	n := &queueNode{value: value}
 	// if the queue is empty, set the head and tail as the node value
@@ -31,8 +30,8 @@ func (q *Queue) Enqueue(value interface{}) {
 	q.tail = n
 }
 
-// Dequeue removes the head node from the queue and returns it
-func (q *Queue) Dequeue() interface{} {
+//
+func (q *simpleQueue) Dequeue() interface{} {
 	n := q.head
 	// return nil, if head is empty
 	if n == nil {
@@ -51,6 +50,6 @@ func (q *Queue) Dequeue() interface{} {
 	return n.value
 }
 
-func (q *Queue) Len() int {
+func (q *simpleQueue) Len() int {
 	return q.length
 }

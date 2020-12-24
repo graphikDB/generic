@@ -1,31 +1,31 @@
 package generic
 
-type Stack struct {
-	top    *node
+type simpleStack struct {
+	top    *stackNode
 	length int
 }
 
-type node struct {
+type stackNode struct {
 	value interface{}
-	prev  *node
+	prev  *stackNode
 }
 
-func NewStack() *Stack {
-	return &Stack{nil, 0}
+func NewStack() Stack {
+	return &simpleStack{nil, 0}
 }
 
-func (s *Stack) Len() int {
+func (s *simpleStack) Len() int {
 	return s.length
 }
 
-func (s *Stack) Peek() interface{} {
+func (s *simpleStack) Peek() interface{} {
 	if s.length == 0 {
 		return nil
 	}
 	return s.top.value
 }
 
-func (s *Stack) Pop() interface{} {
+func (s *simpleStack) Pop() interface{} {
 	if s.length == 0 {
 		return nil
 	}
@@ -36,8 +36,8 @@ func (s *Stack) Pop() interface{} {
 	return n.value
 }
 
-func (s *Stack) Push(value interface{}) {
-	n := &node{value, s.top}
+func (s *simpleStack) Push(value interface{}) {
+	n := &stackNode{value, s.top}
 	s.top = n
 	s.length++
 }
